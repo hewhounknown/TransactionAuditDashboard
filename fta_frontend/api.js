@@ -1,87 +1,11 @@
 const baseUrl = "http://localhost:8000/api/transactions/";
 let currentPageUrl = baseUrl;
 
-
-function displayTransactions(data) {
-  const transactionTable = document.querySelector("#transaction-table");
-  const noDataMessage = document.querySelector("#no-data-message");
-
-  if (data.results.length === 0) {
-    transactionTable.innerHTML = "";
-    noDataMessage.style.display = "block"; 
-  } else {
-    const rows = data.results
-      .map((tx) => {
-
-        let statusBadgeClass = '';
-        if (tx.status === 'completed') {
-          statusBadgeClass = 'bg-primary';
-        } else if (tx.status === 'pending') {
-          statusBadgeClass = 'bg-warning';
-        } else if (tx.status === 'failed') {
-          statusBadgeClass = 'bg-danger';
-        }
-
-        const flaggedBadgeClass = tx.is_flagged ? 'bg-warning' : 'bg-secondary';
-
-        return `
-        <tr>
-          <td>${tx.merchant}</td>
-          <td>${tx.amount}</td>
-          <td><span class="badge ${statusBadgeClass} text-white">${tx.status}</span></td>
-          <td><span class="badge ${flaggedBadgeClass} text-white">${tx.is_flagged ? "Yes" : "No"}</span></td>
-          <td>${tx.approved_by ?? "-"}</td>
-        </tr>`;
-      })
-      .join("");
-    transactionTable.innerHTML = rows;
-    noDataMessage.style.display = "none"; 
-  }
-}
-
-
-function displayPagination(data) {
-  const prevBtn = document.querySelector("#prev-page");
-  const nextBtn = document.querySelector("#next-page");
-
-  if (data.previous) {
-    prevBtn.disabled = false;
-    prevBtn.onclick = function () {
-      currentPageUrl = getPageUrl(data.previous);
-      loadTransactions(currentPageUrl);
-    };
-  } else {
-    prevBtn.disabled = true;
-    prevBtn.onclick = null;
-  }
-
-  if (data.next) {
-    nextBtn.disabled = false;
-    nextBtn.onclick = function () {
-      currentPageUrl = getPageUrl(data.next);
-      loadTransactions(currentPageUrl);
-    };
-  } else {
-    nextBtn.disabled = true;
-    nextBtn.onclick = null;
-  }
-}
-
-function filterByStatus() {
-  currentPageUrl = baseUrl;
-  loadTransactions(currentPageUrl);
-}
-
-
-function searchByMerchant() {
-  currentPageUrl = baseUrl;
-  loadTransactions(currentPageUrl);
-}
-
-function buildUrl() {
+// Build URL with filtering by status or merchant search
+function buildUrl(url) {
   const status = document.querySelector("#status-filter").value.toLowerCase();
-  const merchantSearch = document.querySelector("#merchant-search").value.toLowerCase();
-  const parsedUrl = new URL(baseUrl);
+  const search = document.querySelector("#merchant-search").value.trim();
+  const parsedUrl = new URL(url);
 
   if (status) {
     parsedUrl.searchParams.set("status", status);
@@ -89,45 +13,85 @@ function buildUrl() {
     parsedUrl.searchParams.delete("status");
   }
 
-  if (merchantSearch) {
-    parsedUrl.searchParams.set("search", merchantSearch);
+  if (search) {
+    parsedUrl.searchParams.set("search", search);
   } else {
-    parsedUrl.searchParams.delete("search"); 
+    parsedUrl.searchParams.delete("search");
   }
 
   return parsedUrl.toString();
 }
 
-// to call api
-function loadTransactions(url) {
-  const queryUrl = buildUrl();
-  fetch(queryUrl)
-    .then((response) => response.json())
-    .then((data) => {
-      displayTransactions(data);
-      displayPagination(data);
-    })
-    .catch((error) => console.error("Error loading transactions:", error));
-}
-
-
+// Extract page parameter from API URLs and preserve existing filters
 function getPageUrl(apiUrl) {
   if (!apiUrl) return baseUrl;
   const parsedApiUrl = new URL(apiUrl);
   const page = parsedApiUrl.searchParams.get("page");
-  const newUrl = new URL(baseUrl);
+
+  const newUrl = new URL(currentPageUrl); 
+
   if (page) {
     newUrl.searchParams.set("page", page);
+  } else {
+    newUrl.searchParams.delete("page");
   }
+
   return newUrl.toString();
 }
 
+// call api and update the table
+function loadTransactions(url) {
+  currentPageUrl = buildUrl(url);
+  fetch(currentPageUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      let rows = data.results
+        .map(
+          (tx) => `
+          <tr>
+            <td>${tx.merchant}</td>
+            <td>${tx.amount}</td>
+            <td><span class="badge ${getStatusBadgeClass(tx.status)}">${tx.status}</span></td>
+            <td><span class="badge ${tx.is_flagged ? "bg-danger" : "bg-secondary"}">${tx.is_flagged ? "Flagged" : "No"}</span></td>
+            <td>${tx.approved_by ?? "-"}</td>
+          </tr>`
+        )
+        .join("");
 
-// Initial load
-document.addEventListener("DOMContentLoaded", function () {
-  loadTransactions(baseUrl);
-});
+      document.querySelector("#transaction-table").innerHTML = rows || `<tr><td colspan="5" class="text-center text-muted">No transactions found.</td></tr>`;
 
-document.querySelector("#status-filter").addEventListener("change", filterByStatus);
+      updatePaginationButtons(data.previous, data.next);
+    })
+    .catch((error) => console.error("Error loading transactions:", error));
+}
 
-document.querySelector("#merchant-search").addEventListener("keyup", searchByMerchant);
+// Update pagination button state
+function updatePaginationButtons(previous, next) {
+  const prevBtn = document.querySelector("#prev-page");
+  const nextBtn = document.querySelector("#next-page");
+
+  prevBtn.disabled = !previous;
+  nextBtn.disabled = !next;
+
+  prevBtn.onclick = previous ? () => loadTransactions(getPageUrl(previous)) : null;
+  nextBtn.onclick = next ? () => loadTransactions(getPageUrl(next)) : null;
+}
+
+// Get Bootstrap badge class based on status
+function getStatusBadgeClass(status) {
+  switch (status) {
+    case "pending":
+      return "bg-warning text-dark";
+    case "completed":
+      return "bg-success";
+    case "failed":
+      return "bg-danger";
+    default:
+      return "bg-secondary";
+  }
+}
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", () => loadTransactions(baseUrl));
+document.querySelector("#status-filter").addEventListener("change", () => loadTransactions(baseUrl));
+document.querySelector("#merchant-search").addEventListener("input", () => loadTransactions(baseUrl));
