@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Audit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Transaction Audit Dashboard</h2>
+        <nav>
+            <ul class="pagination" id="pagination-controls">
+                <li class="page-item"><button class="page-link" id="prev-page" disabled>Previous</button></li>
+                <li class="page-item"><button class="page-link" id="next-page">Next</button></li>
+            </ul>
+        </nav>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Merchant</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Flagged</th>
+                    <th>Approved By</th>
+                </tr>
+            </thead>
+            <tbody id="transaction-table" hx-get="http://localhost:8000/api/transactions/" hx-trigger="load" hx-target="#transaction-table" hx-swap="innerHTML">
+            </tbody>
+        </table>
+        
+    </div>
+
+    <script src="script.js"></script>
+    <!-- <script>
+        document.addEventListener("htmx:afterRequest", function(event) {
+            const response = event.detail.xhr.responseText;
+            const data = JSON.parse(response);
+
+            preLink = data.previous;
+            nextLink = data.next;
+
+            console.log(nextLink);
+            
+            let rows = "";
+            data.results.forEach(tx => {
+                rows += `<tr>
+                    <td>${tx.merchant}</td>
+                    <td>${tx.amount}</td>
+                    <td>${tx.status}</td>
+                    <td>${tx.is_flagged ? "Yes" : "No"}</td>
+                    <td>${tx.approved_by ?? "-"}</td>
+                </tr>`;
+            });
+            document.querySelector("#transaction-table").innerHTML = rows;
+
+            document.querySelector("#prev-page").disabled = !data.previous;
+            document.querySelector("#next-page").disabled = !data.next;
+
+            document.querySelector("#prev-page").onclick = function() {
+                if (data.previous) {
+                    document.querySelector("#transaction-table").setAttribute("hx-get", data.previous);
+                    htmx.trigger(document.querySelector("#transaction-table"), "load");
+                }
+            };
+            
+            document.querySelector("#next-page").onclick = function() {
+                if (data.next) {
+                    document.querySelector("#transaction-table").setAttribute("hx-get", data.next);
+                    htmx.trigger(document.querySelector("#transaction-table"), "load");
+                }
+            };
+        });
+    </script> -->
+</body>
+</html>
