@@ -11,15 +11,21 @@
   <div class="container mt-4">
     <h2>Transaction Audit Dashboard</h2>
 
-    <!-- Filter dropdown -->
-    <div class="mb-3">
-      <label for="status-filter" class="form-label">Filter by Status:</label>
-      <select id="status-filter" class="form-select">
-        <option value="">All</option>
-        <option value="pending">Pending</option>
-        <option value="completed">Completed</option>
-        <option value="failed">Failed</option>
-      </select>
+    <!-- Filter dropdown  and search-box -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="status-filter" class="form-label">Filter by Status:</label>
+        <select id="status-filter" class="form-select" onchange="filterTransactions()">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="merchant-search" class="form-label">Search Merchant:</label>
+        <input type="text" id="merchant-search" class="form-control" placeholder="enter merchant">
+      </div>
     </div>
 
     <nav>
@@ -48,9 +54,13 @@
       </tbody>
     </table>
 
+    <div id="no-data-message" class="alert alert-info" style="display: none;">
+      No transactions found.
+    </div>
+
 
   </div>
 
-  <script src="script.js"></script>
+  <script src="api.js"></script>
 </body>
 </html>
