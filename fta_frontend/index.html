@@ -9,6 +9,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body class="d-flex vh-100 overflow-hidden">
     <nav class="d-flex flex-column bg-light text-dark p-3 vh-100 border-end" style="width: 250px;">
@@ -35,7 +36,7 @@
         <main class="p-4 bg-light bg-gradient">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="card text-white bg-success mb-3">
+                    <div class="card text-white bg-primary mb-3">
                         <div class="card-header">Completed Transactions</div>
                         <div class="card-body">
                             <h5 class="card-title" id="completed-amounts">$3,210.00</h5>
@@ -63,11 +64,12 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-7">
-
+            <div class="row mt-4">
+                <div class="col-md-9">
+                    <h2 class="text-center">Merchant Transactions Overview</h2>
+                    <div id="merchantChart"></div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <div class="d-flex justify-content-center m-2">
                         <canvas id="statusPieChart" style="max-width: 400px;"></canvas>
                     </div>
@@ -78,5 +80,6 @@
 
     <script type="module" src="./js/loadDashboard.js"></script>
     <script type="module" src="./js/charts/piechart.js"></script>
+    <script type="module" src="./js/charts/columnchart.js"></script>
 </body>
 </html>

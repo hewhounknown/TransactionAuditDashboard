@@ -11,7 +11,7 @@ async function generatePieChart(){
             {
                 label: 'Total Amount ($)',
                 data: totalAmounts,
-                backgroundColor: ["#fc0539", "#05fcaa", "#e9fa2f"],
+                backgroundColor: ["#fc0539", "#25b6ff", "#e9fa2f"],
             }
         ]
     };

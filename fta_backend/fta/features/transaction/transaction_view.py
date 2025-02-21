@@ -66,3 +66,15 @@ class TransactionViewSet(ModelViewSet):
 
         response_data = list(data)
         return Response(response_data)
+    
+    @action(detail=False, methods=['GET'], url_path='summary-per-merchant')
+    def summary_per_merchant(self, request):
+        transactions = self.get_queryset()
+        data = (
+            transactions.values('merchant')
+            .annotate(total_amount=Sum('amount'), transaction_count=Count('code'))
+            .order_by('-total_amount')
+        )
+
+        response_data = list(data)
+        return Response(response_data)
