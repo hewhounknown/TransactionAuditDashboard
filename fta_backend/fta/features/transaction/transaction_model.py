@@ -20,5 +20,7 @@ class TransactionModel(models.Model):
     approved_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     def save(self, *args, **kwargs):
-        self.code = uuid.uuid4().hex[:6].upper()
+        if not self.code:
+            self.code = uuid.uuid4().hex[:6].upper()
+
         super().save(*args, **kwargs)

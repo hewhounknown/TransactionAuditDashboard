@@ -15,7 +15,7 @@
     <div class="row mb-3">
       <div class="col-md-6">
         <label for="status-filter" class="form-label">Filter by Status:</label>
-        <select id="status-filter" class="form-select" onchange="filterTransactions()">
+        <select id="status-filter" class="form-select">
           <option value="">All</option>
           <option value="pending">Pending</option>
           <option value="completed">Completed</option>
@@ -47,6 +47,7 @@
           <th>Status</th>
           <th>Flagged</th>
           <th>Approved By</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="transaction-table">
@@ -61,6 +62,6 @@
 
   </div>
 
-  <script src="api.js"></script>
+  <script type="module" src="./js/load.js"></script>
 </body>
 </html>
