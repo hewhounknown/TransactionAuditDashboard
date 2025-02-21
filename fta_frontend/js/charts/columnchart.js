@@ -55,7 +55,7 @@ async function generateColumnChart(params) {
         legend: {
             position: "top"
         },
-        colors: ["#008FFB", "#FF4560"]
+        colors: ["#008FFB", "#45ff96"]
     };
 
     const chart = new ApexCharts(document.querySelector("#merchantChart"), options);

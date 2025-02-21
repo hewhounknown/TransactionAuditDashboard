@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction table</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="d-flex vh-100 overflow-hidden">
     <nav class="d-flex flex-column bg-light text-dark p-3 vh-100 border-end" style="width: 250px;">
         <h4 class="text-center">Admin Panel</h4>
         <ul class="nav flex-column mt-3">
             <li class="nav-item border">
-                <a class="nav-link text-dark" href="./index.html">Dashboard</a>
+                <a class="nav-link text-primary p-2 d-flex align-items-center" href="./index.html">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
             </li>
             <li class="nav-item border">
-                <a class="nav-link text-dark" href="./table.html">Transactions</a>
+                <a class="nav-link text-primary p-2 d-flex align-items-center" href="./table.html">
+                    <i class="fas fa-file-invoice-dollar me-2"></i> Transactions
+                </a>
             </li>
         </ul>
     </nav>
@@ -37,7 +43,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="merchant-search" class="form-label">Search Merchant:</label>
-                    <input type="text" id="merchant-search" class="form-control" placeholder="enter merchant">
+                    <input type="text" id="merchant-search" class="form-control shadow-sm" placeholder="merchant..">
                 </div>
             </div>
 
@@ -52,21 +58,23 @@
                 </ul>
             </nav>
 
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>Merchant</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Flagged</th>
-                        <th>Approved By</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="transaction-table">
-                    <!-- Transactions will be loaded here -->
-                </tbody>
-            </table>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered table-striped table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Merchant</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Flagged</th>
+                            <th>Approved By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-table">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
 
             <div id="no-data-message" class="alert alert-info" style="display: none;">
                 No transactions found.
@@ -74,6 +82,6 @@
         </main>
     </div>
 
-    <script type="module" src="./js/load.js"></script>
+    <script type="module" src="./js/loadTable.js"></script>
 </body>
 </html>
