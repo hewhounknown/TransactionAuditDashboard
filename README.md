@@ -47,6 +47,7 @@ After backend services is up in Docker, open `fta_frontend/index.html` file with
 | `GET`    | `/api/transactions/?page={number}` | Get paginated transactions |
 | `GET`    | `/api/transactions/?status={status}` | filter transactions for status |
 | `GET`    |  `/api/transactions/?search={merchant}`  |  search transactions by merchant |
+| `GET`    |  `/api/transactions/?search={merchant}&status={status}`  |  get paginated transactions filtered by merchant and status |
 | `PUT`    | `/api/transactions/{id}/approve`   | set completed status in specific transaction |
 | `PUT`    | `/api/transactions/{id}/flag`    | change transaction flag |
 |  `GET`   | `/api/transactions/summary-per-status/` | display summary per status |
