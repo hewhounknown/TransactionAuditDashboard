@@ -31,9 +31,38 @@
         </nav>
 
         <main class="p-4 bg-light bg-gradient">
-          <p>Welcome to admin Panel</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-header">Completed Transactions</div>
+                        <div class="card-body">
+                            <h5 class="card-title" id="completed-amounts">$3,210.00</h5>
+                            <p class="card-text" id="completed-count">Total completed amount</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-header">Pending Transactions</div>
+                        <div class="card-body">
+                            <h5 class="card-title" id="pending-amounts">$3,210.00</h5>
+                            <p class="card-text" id="pending-count"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-header">Failed Transactions</div>
+                        <div class="card-body">
+                            <h5 class="card-title" id="failed-amounts">$980.00</h5>
+                            <p class="card-text" id="failed-count">Total failed amount</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
+    <script type="module" src="./js/loadDashboard.js"></script>
 </body>
 </html>

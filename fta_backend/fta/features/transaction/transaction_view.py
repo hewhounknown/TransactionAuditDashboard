@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.filters import SearchFilter
+from django.db.models import Sum, Count
 
 class TransactionPagination(PageNumberPagination):
     page_size = 100
@@ -57,3 +58,11 @@ class TransactionViewSet(ModelViewSet):
 
         serializer = self.get_serializer(transaction)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['GET'], url_path='summary-per-status')
+    def summary_per_status(self, request):
+        transactions = self.get_queryset()
+        data = transactions.values('status').annotate(total_amount=Sum('amount'), transaction_count=Count('code'))
+
+        response_data = list(data)
+        return Response(response_data)
