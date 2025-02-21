@@ -5,6 +5,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from ...features.transaction.transaction_model import TransactionModel
+import uuid
 
 load_dotenv() 
 
@@ -33,13 +34,19 @@ class Command(BaseCommand):
     def create_transactions(self):
         admin = User.objects.filter(is_superuser=True).first()
         for i in range(10000):
+            # To prevent code duplication
+            while True:
+                code = uuid.uuid4().hex[:6].upper()
+                if not TransactionModel.objects.filter(code=code).exists():
+                    break
             amount = round(random.uniform(100.00,10000.00) ,2)
             merchant =  f'Merchant {random.randint(1, 22)}'
             timestamp = datetime.now() - timedelta(days=random.randint(1, 365))
             status = random.choice(['pending', 'completed', 'failed'])
             is_flagged = random.choice([True, False])
             approved_by = admin if status == "completed" else None
-            TransactionModel.objects.create(
+            transaction, created = TransactionModel.objects.get_or_create(
+                code=code,
                 amount=amount,
                 merchant=merchant,
                 timestamp=timestamp,
@@ -47,4 +54,6 @@ class Command(BaseCommand):
                 is_flagged=is_flagged,
                 approved_by=approved_by
             )
+            if created :
+                print("Transaction already exited", transaction)
             
