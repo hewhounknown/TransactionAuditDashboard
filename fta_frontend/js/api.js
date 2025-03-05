@@ -15,6 +15,7 @@ function buildUrl(url){
     if (search) parsedUrl.searchParams.set("search", search);
     else parsedUrl.searchParams.delete("search");
 
+    console.log(`built url ${parsedUrl}`)
     return parsedUrl.toString();
 }
 
@@ -28,6 +29,7 @@ export function getPageUrl(apiUrl){
     if (page) newUrl.searchParams.set("page", page);
     else newUrl.searchParams.delete("page");
 
+    console.log(`page url: ${newUrl}`)
     return newUrl.toString();
 }
 

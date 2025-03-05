@@ -19,6 +19,12 @@ class TransactionModel(models.Model):
     is_flagged = models.BooleanField(default=False)
     approved_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['merchant'])
+        ]
+
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = uuid.uuid4().hex[:6].upper()

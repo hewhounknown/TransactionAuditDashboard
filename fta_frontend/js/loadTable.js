@@ -36,7 +36,9 @@ async function loadTransactions(url = 'http://localhost:8000/api/transactions/')
 function updatePaginationButtons(previous, next){
     const prevBtn = document.querySelector("#prev-page");
     const nextBtn = document.querySelector("#next-page");
-  
+
+    console.log(`paginate : ${prevBtn.disabled} - ${nextBtn.disabled} || ${previous} - ${next}`)
+
     prevBtn.disabled = !previous;
     nextBtn.disabled = !next;
   

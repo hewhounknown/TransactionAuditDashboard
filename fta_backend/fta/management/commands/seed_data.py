@@ -55,5 +55,5 @@ class Command(BaseCommand):
                 approved_by=approved_by
             )
             if created :
-                print("Transaction already exited", transaction)
+                print("Transaction created:", transaction)
             
