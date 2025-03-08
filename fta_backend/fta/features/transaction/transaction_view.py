@@ -4,8 +4,10 @@ from .transaction_serializer import TransactionSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.filters import SearchFilter
 from django.db.models import Sum, Count
+from django.contrib.auth import get_user_model
 
 class TransactionPagination(PageNumberPagination):
     page_size = 30
@@ -42,8 +44,9 @@ class TransactionViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
                 )
         
+        superuser = get_user_model().objects.get(is_superuser=True)
         transaction.status = 'completed'
-        transaction.approved_by = request.user
+        transaction.approved_by = superuser
         transaction.save()
 
         serializer = self.get_serializer(transaction)

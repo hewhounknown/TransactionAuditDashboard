@@ -24,9 +24,17 @@ class TransactionModel(models.Model):
             models.Index(fields=['status']),
             models.Index(fields=['merchant'])
         ]
+        ordering = ['-timestamp']
 
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = uuid.uuid4().hex[:6].upper()
 
         super().save(*args, **kwargs)
+
+    # @property
+    # def get_approved_by(self):
+    #     return self.approved_by if self.approved_by and self.approved_by.is_authenticated else None
+
+    # def set_approved_by(self, user):
+    #     self.approved_by = user if user and user.is_authenticated else None

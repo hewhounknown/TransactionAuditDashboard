@@ -41,7 +41,7 @@ function updatePaginationButtons(previous, next){
 
     prevBtn.disabled = !previous;
     nextBtn.disabled = !next;
-  
+
     prevBtn.onclick = previous ? () => loadTransactions(getPageUrl(previous)) : null;
     nextBtn.onclick = next ? () => loadTransactions(getPageUrl(next)) : null;
 }
