@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.filters import SearchFilter
 from django.db.models import Sum, Count
 from django.contrib.auth import get_user_model
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class TransactionPagination(PageNumberPagination):
     page_size = 30
@@ -15,6 +17,8 @@ class TransactionPagination(PageNumberPagination):
     max_page_size = 100
 
 class TransactionViewSet(ModelViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = TransactionModel.objects.all()
     serializer_class = TransactionSerializer
     pagination_class = TransactionPagination
@@ -44,9 +48,10 @@ class TransactionViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
                 )
         
-        superuser = get_user_model().objects.get(is_superuser=True)
+        #superuser = get_user_model().objects.get(is_superuser=True)
+        print(request.user)
         transaction.status = 'completed'
-        transaction.approved_by = superuser
+        transaction.approved_by = request.user
         transaction.save()
 
         serializer = self.get_serializer(transaction)

@@ -33,9 +33,58 @@ export function getPageUrl(apiUrl){
     return newUrl.toString();
 }
 
-export async function fetchTransactions(url){
+async function getToken() {
     try {
-        const response = await fetch(buildUrl(url));
+        const response = await fetch('http://localhost:8000/api/token/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: import.meta.env.SUPER_NAME,  // from .env SUPER_NAME
+                password: import.meta.env.SUPER_PASSWORD    // from .env SUPER_PASSWORD
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to get token');
+        }
+
+        const data = await response.json();
+        
+        // Store tokens in localStorage
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+        
+        return data.access;
+    } catch (error) {
+        console.error('Error getting token:', error);
+        return null;
+    }
+}
+
+// Helper function for authenticated requests
+async function authenticatedFetch(url, options = {}) {
+    let token = localStorage.getItem('access_token');
+    if (!token) {
+        await getToken();
+        token = localStorage.getItem('access_token');
+    }
+
+    const defaultHeaders = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+
+    return fetch(url, {
+        ...options,
+        headers: defaultHeaders
+    });
+}
+
+export async function fetchTransactions(url) {
+    try {
+        const response = await authenticatedFetch(buildUrl(url));
         return await response.json();
     } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -43,43 +92,39 @@ export async function fetchTransactions(url){
     }
 }
 
-export async function approveTransaction(code){
-    let url = `${baseURL}${code}/approve/`;
-
+export async function approveTransaction(code) {
     try {
-        await fetch(url, { method: 'PUT'}).then(
-            (response) => response.json()
-        );
-        console.log(`${code} is approve`)
-        return await true;
+        const response = await authenticatedFetch(`${baseURL}${code}/approve/`, {
+            method: 'PUT'
+        });
+        await response.json();
+        console.log(`${code} is approve`);
+        return true;
     } catch (error) {
         console.error("Error approving transaction:", error);
         return false;
     }
 }
 
-export async function flagTransaction(code){
-    let url = `${baseURL}${code}/flag/`;
-
+export async function flagTransaction(code) {
     try {
-        await fetch(url, { method: 'PUT'}).then(
-            (response) => response.json()
-        );
-        console.log(`${code} changed flag`)
-        return await true;
+        const response = await authenticatedFetch(`${baseURL}${code}/flag/`, {
+            method: 'PUT'
+        });
+        await response.json();
+        console.log(`${code} changed flag`);
+        return true;
     } catch (error) {
         console.error("Error flagging transaction:", error);
         return false;
     }
 }
 
-export async function  fetchSummaryBy(val) {
-    let url = `${baseURL}${val}/`;
-
+export async function fetchSummaryBy(val) {
     try {
-        const response = await fetch(url);
-        let data = await response.json()
-        console.log(data)
+        const response = await authenticatedFetch(`${baseURL}${val}/`);
+        const data = await response.json();
+        console.log(data);
         return data;
     } catch (error) {
         console.error(`Error fetching total amount per ${val}: `, error);
